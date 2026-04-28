@@ -1,6 +1,15 @@
+// import 'dart:nativewrappers/_internal/vm/lib/ffi_patch.dart';
+
+import 'package:ea_seminario_flutter/models/task.dart';
+import 'package:ea_seminario_flutter/providers/auth_provider.dart';
 import 'package:flutter/material.dart';
 import '../models/organization.dart';
 import '../services/organization_service.dart';
+import 'package:provider/provider.dart';
+
+/**
+ * Pantalla de crear nueva tarea
+ */
 
 class CreateTaskScreen extends StatefulWidget {
   final String organizacionId;
@@ -23,6 +32,7 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _startDateController = TextEditingController();
   final TextEditingController _endDateController = TextEditingController();
+  final TextEditingController statusController = TextEditingController();
 
   DateTime? _startDate;
   DateTime? _endDate;
@@ -36,6 +46,10 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
     _selectedUsuarioIds = widget.usuarios
         .map((OrganizationUser user) => user.id)
         .toSet();
+    // _selectedUsuarioIds = Set<String>();
+    // var authProvider = context.read<AuthProvider>();
+    // Un pequeño bypass
+    // _selectedUsuarioIds.add(authProvider.getService().retrieveId());
   }
 
   @override
@@ -127,7 +141,8 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
     return DateTime(date.year, date.month, date.day, 17, 0, 0);
   }
 
-  Future<void> _submitForm() async {
+  //Future<void>
+  void _submitForm() async {
     if (!_formKey.currentState!.validate() || _isSubmitting) {
       return;
     }
@@ -144,12 +159,22 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
     });
 
     try {
-      await _organizationService.createTaskByOrganization(
-        organizacionId: widget.organizacionId,
+      List<OrganizationUser> l_usuarios //= [];
+      = _selectedUsuarioIds.toList().map((String element) {
+        return OrganizationUser(id: element, name: '');
+        // Esto me puede perseguir en un futuro
+      }).toList();
+      Task tarea = new Task(
+        id: '0',
         titulo: _titleController.text.trim(),
         fechaInicio: _normalizeStartDate(_startDate!),
         fechaFin: _normalizeEndDate(_endDate!),
-        usuarios: _selectedUsuarioIds.toList(),
+        usuarios: l_usuarios,
+        status: statusController.text,
+      );
+      await _organizationService.createTaskByOrganization(
+        widget.organizacionId,
+        tarea,
       );
 
       print('Formulario válido. Datos listos para la Fase 4');
@@ -193,7 +218,10 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
                     const SizedBox(height: 12),
                     const Text(
                       'Selecciona usuarios',
-                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                     const SizedBox(height: 8),
                     Expanded(
@@ -343,23 +371,30 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
                                     _selectedUsuarioIds.isEmpty
                                         ? 'Pulsa para seleccionar'
                                         : widget.usuarios
-                                            .where(
-                                              (u) => _selectedUsuarioIds.contains(
-                                                u.id,
-                                              ),
-                                            )
-                                            .map((u) => u.name)
-                                            .join(', '),
+                                              .where(
+                                                (u) => _selectedUsuarioIds
+                                                    .contains(u.id),
+                                              )
+                                              .map((u) => u.name)
+                                              .join(', '),
                                     style: TextStyle(
-                                      color:
-                                          _selectedUsuarioIds.isEmpty
-                                              ? Colors.grey[600]
-                                              : Colors.black87,
+                                      color: _selectedUsuarioIds.isEmpty
+                                          ? Colors.grey[600]
+                                          : Colors.black87,
                                     ),
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
                                   ),
                                 ),
+                              ),
+                              TextFormField(
+                                controller: statusController,
+                                decoration: _buildInputDecoration(
+                                  label: 'Status',
+                                  hint: 'Eqcribe el estado de la tarea',
+                                  icon: Icons.title,
+                                ),
+                                textInputAction: TextInputAction.next,
                               ),
                             ],
                           ),
@@ -372,7 +407,11 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
-                  onPressed: _isSubmitting ? null : _submitForm,
+                  onPressed: //_isSubmitting ? null : _submitForm,
+                  () {
+                    if (!_isSubmitting)
+                      _submitForm(); //repito, mejor sin operador tenrario
+                  },
                   style: ElevatedButton.styleFrom(
                     minimumSize: const Size.fromHeight(52),
                   ),

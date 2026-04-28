@@ -16,7 +16,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
 
-  Future<void> _login() async {
+  Future<void> loginCallback() async {
     final authProvider = context.read<AuthProvider>();
 
     final success = await authProvider.login(
@@ -40,10 +40,7 @@ class _LoginScreenState extends State<LoginScreen> {
     final _errorMessage = authProvider.errorMessage;
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Iniciar Sesión'),
-        centerTitle: true,
-      ),
+      appBar: AppBar(title: const Text('Iniciar Sesión'), centerTitle: true),
       body: Center(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(16.0),
@@ -66,8 +63,8 @@ class _LoginScreenState extends State<LoginScreen> {
                   Text(
                     'Bienvenido a Event Manager',
                     style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
+                      fontWeight: FontWeight.bold,
+                    ),
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 20),
@@ -109,7 +106,9 @@ class _LoginScreenState extends State<LoginScreen> {
                           borderRadius: BorderRadius.circular(8),
                         ),
                       ),
-                      onPressed: _isLoading ? null : _login,
+                      onPressed: _isLoading
+                          ? null
+                          : loginCallback, // Si pero no, yo no lo pondria como un operador ternario, es dificil de leer y hay alternativas a esto.
                       child: _isLoading
                           ? const SizedBox(
                               height: 20,

@@ -4,7 +4,7 @@ import '../services/auth_service.dart';
 
 class AuthProvider extends ChangeNotifier {
   final AuthService _authService = AuthService();
-  
+
   User? _currentUser;
   bool _isLoading = false;
   String _errorMessage = '';
@@ -36,5 +36,9 @@ class AuthProvider extends ChangeNotifier {
       notifyListeners();
       return false;
     }
+  }
+
+  AuthService getService() {
+    return _authService;
   }
 }

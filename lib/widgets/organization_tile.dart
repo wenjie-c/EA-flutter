@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import '../models/organization.dart';
 import '../screens/organization_detail_screen.dart';
 
+/**
+ * Organizacion individual
+ */
 class OrganizationTile extends StatelessWidget {
   final Organization organization;
 

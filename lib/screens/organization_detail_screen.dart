@@ -5,6 +5,10 @@ import '../services/organization_service.dart';
 import 'create_task_screen.dart';
 import 'task_detail_screen.dart';
 
+/**
+ * Vista detallada de cada organizacion
+ */
+
 class OrganizationDetailScreen extends StatefulWidget {
   final Organization organization;
 
@@ -157,13 +161,29 @@ class _OrganizationDetailScreenState extends State<OrganizationDetailScreen> {
                     Expanded(
                       child: tasks.isEmpty
                           ? const Center(
-                              child: Text('Aún no hay tareas en esta organización'),
+                              child: Text(
+                                'Aún no hay tareas en esta organización',
+                              ),
                             )
                           : ListView.builder(
                               padding: const EdgeInsets.symmetric(vertical: 10),
                               itemCount: tasks.length,
                               itemBuilder: (BuildContext context, int index) {
                                 final Task task = tasks[index];
+                                Color statusColor;
+                                switch (task.status) {
+                                  case 'To do':
+                                    statusColor = Colors.red;
+                                    break;
+                                  case 'In Progress':
+                                    statusColor = Colors.yellow;
+                                    break;
+                                  case 'Done':
+                                    statusColor = Colors.green;
+                                    break;
+                                  default:
+                                    statusColor = Colors.grey;
+                                }
 
                                 return Card(
                                   margin: const EdgeInsets.symmetric(
@@ -174,7 +194,8 @@ class _OrganizationDetailScreenState extends State<OrganizationDetailScreen> {
                                     onTap: () {
                                       Navigator.of(context).push(
                                         MaterialPageRoute(
-                                          builder: (context) => TaskDetailScreen(task: task),
+                                          builder: (context) =>
+                                              TaskDetailScreen(task: task),
                                         ),
                                       );
                                     },
@@ -186,9 +207,10 @@ class _OrganizationDetailScreenState extends State<OrganizationDetailScreen> {
                                       ),
                                     ),
                                     subtitle: Text(
-                                      'Inicio: ${_formatDate(task.fechaInicio)}\nFin: ${_formatDate(task.fechaFin)}',
+                                      'Inicio: ${_formatDate(task.fechaInicio)}\nFin: ${_formatDate(task.fechaFin)}\Estado: ${task.status}',
                                     ),
                                     isThreeLine: true,
+                                    tileColor: statusColor,
                                   ),
                                 );
                               },
@@ -219,6 +241,7 @@ class _OrganizationDetailScreenState extends State<OrganizationDetailScreen> {
             ),
           ],
         ),
+        // Crea una nueva tarea
         child: ElevatedButton(
           onPressed: () async {
             final bool? created = await Navigator.of(context).push<bool>(
