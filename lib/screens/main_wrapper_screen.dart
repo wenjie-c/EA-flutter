@@ -20,6 +20,7 @@ class _MainWrapperScreenState extends State<MainWrapperScreen> {
   final List<GlobalKey<NavigatorState>> _navigatorKeys = [
     GlobalKey<NavigatorState>(),
     GlobalKey<NavigatorState>(),
+    GlobalKey<NavigatorState>(),
   ];
 
   @override
@@ -50,7 +51,7 @@ class _MainWrapperScreenState extends State<MainWrapperScreen> {
             // ?
             _buildOffstageNavigator(0, const HomeScreen()),
             _buildOffstageNavigator(1, const ProfileScreen()),
-            //_buildOffstageNavigator(2, const TasksScreen()),
+            _buildOffstageNavigator(2, const TasksScreen()),
           ],
         ),
         bottomNavigationBar: BottomNavigationBar(
@@ -73,7 +74,7 @@ class _MainWrapperScreenState extends State<MainWrapperScreen> {
               label: 'Inicio',
             ), // Label: 'Home' seria mejor, por consistencia
             BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Perfil'),
-            //BottomNavigationBarItem(icon: Icon(Icons.abc), label: 'Tasks'),
+            BottomNavigationBarItem(icon: Icon(Icons.abc), label: 'Tasks'),
           ],
         ),
       ),
@@ -95,7 +96,7 @@ class _MainWrapperScreenState extends State<MainWrapperScreen> {
 }
 
 // No se complican mucho las cosas?
-// Asi ya seria suficiente y compartiriamos lo mismos datos. https://medium.com/@rk0936626/bottomnavigationbar-in-flutter-e51a1b53b402
+// Asi ya seria suficiente y tendriamos el mismo scope. https://medium.com/@rk0936626/bottomnavigationbar-in-flutter-e51a1b53b402
   // final List<Widget> _screens = [
   //   Center(child: Text('Home Screen')),
   //   Center(child: Text('Search Screen')),

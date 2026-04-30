@@ -1,12 +1,15 @@
 import 'dart:convert';
+import 'package:ea_seminario_flutter/services/SharedPreferences.dart';
 import 'package:http/http.dart' as http;
 import '../utils/constants.dart';
 
 class AuthService {
+  /*
   String userId = '';
   String retrieveId() {
     return this.userId;
   }
+  */
 
   Future<Map<String, dynamic>> login(String email, String password) async {
     try {
@@ -17,6 +20,9 @@ class AuthService {
       );
 
       if (response.statusCode == 200) {
+        var res = json.decode(response.body);
+        SharedPreferences pref = SharedPreferences();
+        pref.put('id', res['_id']);
         return json.decode(response.body);
       } else {
         final body = json.decode(response.body);
@@ -46,8 +52,8 @@ class AuthService {
       );
 
       if (response.statusCode == 201) {
+        //userId = res['_id'];
         var res = json.decode(response.body);
-        userId = res['_id'];
         return res;
       } else {
         final body = json.decode(response.body);
